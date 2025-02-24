@@ -36,7 +36,7 @@
         </p>
         <p><b>User likes: {{ pcbuildlisting.count_likes }}</b></p>
         {% if user.is_authenticated %}
-            <form method="post" action="{% url 'like-pcbuildlistings' pcbuildlisting.id %}">
+            <form method="post" action="{% url 'like-pcbuildlisting' pcbuildlisting.id %}">
                 {% csrf_token %}
                 {% if pcbuildlisting.user_liked %}
                     <button type="submit" class="btn btn-outline-danger"><b>Unlike</b></button>

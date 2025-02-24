@@ -29,3 +29,14 @@ class Seller(models.Model):
 
     def __str__(self):
         return f"{self.f_name} {self.l_name}, {self.email}, {self.phone_num}"
+
+
+class SellerReview(models.Model):
+    date_created = models.DateTimeField(auto_now_add=True)
+    content = models.TextField('Review content', max_length=2000)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True)
+
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.date_created}, {self.reviewer}, {self.seller}, {self.content[:50]}"

@@ -2,6 +2,28 @@
 
 {% block content %}
 <h1>My listings</h1>
+<p class="mt-4">
+    <a href="{% url 'create-cpulisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new CPU listing</b></button></a>
+    <a href="{% url 'create-gpulisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new GPU listing</b></button></a>
+    <a href="{% url 'create-psulisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new PSU listing</b></button></a>
+    <a href="{% url 'create-ramlisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new RAM listing</b></button></a>
+    <a href="{% url 'create-pcbuildlisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new PC build listing</b></button></a>
+</p>
+<p>
+    <a href="{% url 'create-storagelisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new storage listing</b></button></a>
+    <a href="{% url 'create-casepclisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new PC case listing</b></button></a>
+    <a href="{% url 'create-motherboardlisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new motherboard listing</b></button></a>
+    <a href="{% url 'create-cpucoolerlisting' %}">
+        <button class="btn btn-dark btn-sm"><b>Create new CPU cooler listing</b></button></a>
+</p>
 <ul class="nav nav-tabs" id="myTab" role="tablist" >
     <li class="nav-item">
         <a class="nav-link active" id="cpu-tab" data-toggle="tab"
@@ -64,6 +86,8 @@
                     </a>
                     <a href="{% url 'user-delete-cpulisting' listing.id %}">
                         <button class="btn btn-outline-danger btn-sm"><b>Delete</b></button></a>
+                    <a href="{% url 'user-update-cpulisting' listing.id %}">
+                        <button class="btn btn-outline-warning btn-sm"><b>Update</b></button></a>
                     </p>
                 </li>
              {% endfor %}
@@ -351,6 +375,7 @@
                     {{ listing.pc_build.cpu_disp }}, {{ listing.pc_build.gpu_disp }}, {{ listing.pc_build.motherboard_disp }},
                     {{ listing.pc_build.ram_disp }}  {{ listing.pc_build.storage_disp }}
                     </p>
+                    <p><b>User likes: {{ listing.count_likes }}</b></p>
                     <p>
                     <a href="{% url 'pcbuild-listing-one' listing.id %}">
                     <button class="btn btn-outline-secondary btn-sm">
@@ -359,6 +384,8 @@
                     </a>
                     <a href="{% url 'user-delete-pcbuildlisting' listing.id %}">
                     <button class="btn btn-outline-danger btn-sm"><b>Delete</b></button></a>
+                    <a href="{% url 'user-update-pcbuildlisting' listing.id %}">
+                    <button class="btn btn-outline-warning btn-sm"><b>Update</b></button></a>
                     </p>
                 </li>
              {% endfor %}

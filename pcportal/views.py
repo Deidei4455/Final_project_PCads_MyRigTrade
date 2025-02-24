@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views import generic
 from django.core.paginator import Paginator
 
@@ -10,12 +10,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models.seller_model import Seller
+
 from .models.part_models import Cpu, Gpu, Psu, Ram, Storage, CasePC, Motherboard, CpuCooler
+
 from .models.part_listing_models import (CpuListing, GpuListing, PsuListing,
                                          RamListing, StorageListing, CasePCListing,
                                          MotherboardListing, CpuCoolerListing)
-from .models.build_with_listing import PcBuild, PcBuildListing
-from .forms import ProfileUpdateForm, UserUpdateForm, User
+
+from .models.build_with_listing import PcBuild, PcBuildListing, RamBuild, StorageBuild, UserLikes
+
+from .forms import (ProfileUpdateForm, UserUpdateForm, User, UserCpuListingCreateForm,
+                    UserPcbuildListingCreateForm, SellerReviewForm, UserGpuListingCreateForm,
+                    UserPsuListingCreateForm, UserRamListingCreateForm, UserStorageListingCreateForm,
+                    UserCasePCListingCreateForm, UserMotherboardListingCreateForm, UserCpuCoolerListingCreateForm)
+
 from .utils import check_password
 
 
@@ -37,6 +45,15 @@ def index(request):
                            + StorageListing.objects.count() + CasePCListing.objects.count()
                            + MotherboardListing.objects.count() + CpuCoolerListing.objects.count())
 
+    cpus_listings = CpuListing.objects.all()
+    total_price_cpus = 0
+    cpu_listing_count = 0
+    for listing in cpus_listings:
+        total_price_cpus += listing.price * listing.quantity
+        cpu_listing_count += listing.quantity
+
+    total_price_cpus_avg = total_price_cpus / cpu_listing_count
+
     num_pc_builds = PcBuild.objects.count()
     num_pc_build_listings = PcBuildListing.objects.count()
 
@@ -51,7 +68,9 @@ def index(request):
         'num_pc_builds': num_pc_builds,
         'num_pc_build_listings': num_pc_build_listings,
         'num_sellers': num_sellers,
-        'num_visits': num_visits
+        'num_visits': num_visits,
+        'total_price': total_price_cpus,
+        'total_price_cpus_avg': round(total_price_cpus_avg, 2),
     }
 
     return render(request, 'index.html', context=context_my)
@@ -149,6 +168,14 @@ class PcBuildListingListView(generic.ListView):
     template_name = 'pcbuild_listings.html'
     paginate_by = 6
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_authenticated:
+            for listing in context['pcbuildlistings']:
+                listing.user_liked = listing.likes.filter(user=user).exists()
+        return context
+
 
 class SellerListView(generic.ListView):
     """
@@ -206,6 +233,36 @@ def get_one_seller(request, seller_id):
     return render(request, 'seller.html', context=context)
 
 
+class SellerDetailView(generic.edit.FormMixin, generic.DetailView):
+    """
+    This class uses seller's primary key to
+    gets a specific seller by it and then
+    renders that seller in a page.
+    """
+    model = Seller
+    context_object_name = "seller"
+    template_name = "seller.html"
+    form_class = SellerReviewForm
+    seller_object = None
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.seller_object = self.get_object()
+        form.instance.seller = self.get_object()
+        form.instance.reviewer = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('seller-one', kwargs={'pk': self.seller_object.id})
+
+
 class CpuListingDetailView(generic.DetailView):
     """
     This class retrieves information about
@@ -214,7 +271,7 @@ class CpuListingDetailView(generic.DetailView):
     """
     model = CpuListing
     context_object_name = 'cpu_listing'
-    template_name = 'listing_cpu.html'
+    template_name = 'one_listing_templates/listing_cpu.html'
 
 
 class GpuListingDetailView(generic.DetailView):
@@ -225,7 +282,7 @@ class GpuListingDetailView(generic.DetailView):
     """
     model = GpuListing
     context_object_name = 'gpu_listing'
-    template_name = 'listing_gpu.html'
+    template_name = 'one_listing_templates/listing_gpu.html'
 
 
 class PsuListingDetailView(generic.DetailView):
@@ -236,7 +293,7 @@ class PsuListingDetailView(generic.DetailView):
     """
     model = PsuListing
     context_object_name = 'psu_listing'
-    template_name = 'listing_psu.html'
+    template_name = 'one_listing_templates/listing_psu.html'
 
 
 class RamListingDetailView(generic.DetailView):
@@ -247,7 +304,7 @@ class RamListingDetailView(generic.DetailView):
     """
     model = RamListing
     context_object_name = 'ram_listing'
-    template_name = 'listing_ram.html'
+    template_name = 'one_listing_templates/listing_ram.html'
 
 
 class StorageListingDetailView(generic.DetailView):
@@ -258,7 +315,7 @@ class StorageListingDetailView(generic.DetailView):
     """
     model = StorageListing
     context_object_name = 'storage_listing'
-    template_name = 'listing_storage.html'
+    template_name = 'one_listing_templates/listing_storage.html'
 
 
 class CasePCListingDetailView(generic.DetailView):
@@ -269,7 +326,7 @@ class CasePCListingDetailView(generic.DetailView):
     """
     model = CasePCListing
     context_object_name = 'casepc_listing'
-    template_name = 'listing_casepc.html'
+    template_name = 'one_listing_templates/listing_casepc.html'
 
 
 class MotherboardListingDetailView(generic.DetailView):
@@ -280,7 +337,7 @@ class MotherboardListingDetailView(generic.DetailView):
     """
     model = MotherboardListing
     context_object_name = 'motherboard_listing'
-    template_name = 'listing_motherboard.html'
+    template_name = 'one_listing_templates/listing_motherboard.html'
 
 
 class CpuCoolerListingDetailView(generic.DetailView):
@@ -291,7 +348,7 @@ class CpuCoolerListingDetailView(generic.DetailView):
     """
     model = CpuCoolerListing
     context_object_name = 'cpucooler_listing'
-    template_name = 'listing_cpucooler.html'
+    template_name = 'one_listing_templates/listing_cpucooler.html'
 
 
 class PcBuildListingDetailView(generic.DetailView):
@@ -302,7 +359,15 @@ class PcBuildListingDetailView(generic.DetailView):
     """
     model = PcBuildListing
     context_object_name = 'pcbuildlisting'
-    template_name = 'listing_pcbuild.html'
+    template_name = 'one_listing_templates/listing_pcbuild.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        listing = context['pcbuildlisting']
+        if user.is_authenticated:
+            listing.user_liked = listing.likes.filter(user=user).exists()
+        return context
 
 
 # search views
@@ -340,6 +405,9 @@ def search_pcbuildlisting(request):
     query_min_price = request.GET.get('min_price')
     query_max_price = request.GET.get('max_price')
 
+    if not query_text and not query_min_price and not query_max_price:
+        return redirect('pcbuild-listings')
+
     pcbuildlisting_list = PcBuildListing.objects.filter(Q(pc_build__title__icontains=query_text) |
                                                         Q(pc_build__cpu__brand__icontains=query_text) |
                                                         Q(pc_build__gpu__brand__icontains=query_text) |
@@ -357,7 +425,9 @@ def search_pcbuildlisting(request):
 
     context = {'query_text': query_text,
                'pcbuildlistings': pcbuildlisting_list,
-               'search_count': search_count
+               'search_count': search_count,
+               'query_min_price': query_min_price,
+               'query_max_price': query_max_price,
                }
 
     return render(request, 'search_pcbuildlisting.html', context=context)
@@ -373,6 +443,9 @@ def search_part_listings_by_price(request):
 
     query_min_price = request.GET.get('min_price')
     query_max_price = request.GET.get('max_price')
+
+    if not query_min_price and not query_max_price:
+        return redirect('part-listings')
 
     cpu_listings = CpuListing.objects.all()
     gpu_listings = GpuListing.objects.all()
@@ -425,6 +498,8 @@ def search_part_listings_by_price(request):
         'motherboard_listings': paged_motherboard_listings,
         'cpucooler_listings': paged_cpucooler_listings,
         'active_tab': tab,
+        'query_min_price': query_min_price,
+        'query_max_price': query_max_price,
     }
     return render(request, 'part_listings_by_price.html', context=context_my)
 
@@ -540,8 +615,11 @@ def get_user_profile(request):
 # listings by user delete views
 
 class CpuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own CPU listing.
+    """
     model = CpuListing
-    template_name = 'user_cpulisting_delete.html'
+    template_name = 'user_delete_templates/user_cpulisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'cpu_listing'
 
@@ -551,8 +629,11 @@ class CpuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generi
 
 
 class GpuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own GPU listing.
+    """
     model = GpuListing
-    template_name = 'user_gpulisting_delete.html'
+    template_name = 'user_delete_templates/user_gpulisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'gpu_listing'
 
@@ -562,8 +643,11 @@ class GpuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generi
 
 
 class PsuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own PSU listing.
+    """
     model = PsuListing
-    template_name = 'user_psulisting_delete.html'
+    template_name = 'user_delete_templates/user_psulisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'psu_listing'
 
@@ -573,8 +657,11 @@ class PsuListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generi
 
 
 class RamListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own RAM listing.
+    """
     model = RamListing
-    template_name = 'user_ramlisting_delete.html'
+    template_name = 'user_delete_templates/user_ramlisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'ram_listing'
 
@@ -584,8 +671,11 @@ class RamListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generi
 
 
 class StorageListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own Storage device listing.
+    """
     model = StorageListing
-    template_name = 'user_storagelisting_delete.html'
+    template_name = 'user_delete_templates/user_storagelisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'storage_listing'
 
@@ -595,8 +685,11 @@ class StorageListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, ge
 
 
 class CasePCListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own PC case listing.
+    """
     model = CasePCListing
-    template_name = 'user_casepclisting_delete.html'
+    template_name = 'user_delete_templates/user_casepclisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'casepc_listing'
 
@@ -606,8 +699,11 @@ class CasePCListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, gen
 
 
 class MotherboardListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own motherboard listing.
+    """
     model = MotherboardListing
-    template_name = 'user_motherboardlisting_delete.html'
+    template_name = 'user_delete_templates/user_motherboardlisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'motherboard_listing'
 
@@ -617,8 +713,11 @@ class MotherboardListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin
 
 
 class CpuCoolerListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own CPU cooler listing.
+    """
     model = CpuCoolerListing
-    template_name = 'user_cpucoolerlisting_delete.html'
+    template_name = 'user_delete_templates/user_cpucoolerlisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'cpucooler_listing'
 
@@ -628,11 +727,450 @@ class CpuCoolerListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, 
 
 
 class PcBuildListingByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """
+    This class lets users delete their own PC build listing.
+    """
     model = PcBuildListing
-    template_name = 'user_pcbuildlisting_delete.html'
+    template_name = 'user_delete_templates/user_pcbuildlisting_delete.html'
     success_url = '/pcportal/mylistings'
     context_object_name = 'pcbuildlisting'
 
     def test_func(self):
         pcbuildlisting_object = self.get_object()
         return pcbuildlisting_object.listing_seller == self.request.user
+
+
+# Listing creation, update form views
+
+class CpuListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This class lets users create their own CPU listing.
+    """
+    model = CpuListing
+    form_class = UserCpuListingCreateForm
+    template_name = 'user_create_templates/user_cpulisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        cpu = form.cleaned_data['cpu']
+        cpu_brand = form.cleaned_data['cpu_brand']
+        cpu_model_new = form.cleaned_data['cpu_model_new']
+        cpu_cores = form.cleaned_data['cpu_cores']
+        cpu_base_speed = form.cleaned_data['cpu_base_speed']
+        cpu_socket_type = form.cleaned_data['cpu_socket_type']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not cpu and cpu_brand and cpu_model_new:
+            cpu = Cpu.objects.create(
+                brand=cpu_brand,
+                cpu_model=cpu_model_new,
+                cores=cpu_cores,
+                base_clock_speed=cpu_base_speed,
+                socket_type=cpu_socket_type
+            )
+        form.instance.cpu = cpu
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class CpuListingByUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    """
+    This class lets users update their own CPU listing.
+    """
+    model = CpuListing
+    form_class = UserCpuListingCreateForm
+    template_name = 'user_create_templates/user_cpulisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        cpu = form.cleaned_data['cpu']
+        cpu_brand = form.cleaned_data['cpu_brand']
+        cpu_model_new = form.cleaned_data['cpu_model_new']
+        cpu_cores = form.cleaned_data['cpu_cores']
+        cpu_base_speed = form.cleaned_data['cpu_base_speed']
+        cpu_socket_type = form.cleaned_data['cpu_socket_type']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not cpu and cpu_brand and cpu_model_new:
+            cpu = Cpu.objects.create(
+                brand=cpu_brand,
+                cpu_model=cpu_model_new,
+                cores=cpu_cores,
+                base_clock_speed=cpu_base_speed,
+                socket_type=cpu_socket_type
+            )
+        form.instance.cpu = cpu
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+    def test_func(self):
+        cpulisting_object = self.get_object()
+        return cpulisting_object.listing_seller == self.request.user
+
+
+class PcBuildListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This class lets users create their own pc build listing.
+    """
+    model = PcBuildListing
+    form_class = UserPcbuildListingCreateForm
+    template_name = 'user_create_templates/user_pcbuildlisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        title = form.cleaned_data.get('title')
+        cpu = form.cleaned_data.get('cpu')
+        gpu = form.cleaned_data.get('gpu')
+        psu = form.cleaned_data.get('psu')
+        motherboard = form.cleaned_data.get('motherboard')
+        cpucooler = form.cleaned_data.get('cpucooler')
+        casepc = form.cleaned_data.get('casepc')
+        ram = form.cleaned_data.get('ram')
+        ram_quantity = form.cleaned_data.get('ram_quantity')
+        storage = form.cleaned_data.get('storage')
+        storage_quantity = form.cleaned_data.get('storage_quantity')
+        price = form.cleaned_data.get('price')
+        pc_build = PcBuild.objects.create(
+            title=title,
+            cpu=cpu,
+            cpucooler=cpucooler,
+            gpu=gpu,
+            psu=psu,
+            motherboard=motherboard,
+            pc_case=casepc,
+        )
+        RamBuild.objects.create(ram=ram, quantity=ram_quantity, pcbuild=pc_build)
+        StorageBuild.objects.create(storage=storage, quantity=storage_quantity, pcbuild=pc_build)
+
+        form.instance.pc_build = pc_build
+        form.instance.price = price
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class PcBuildListingByUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    """
+    This view lets users update their Pc build listings.
+    """
+    model = PcBuildListing
+    form_class = UserPcbuildListingCreateForm
+    template_name = 'user_create_templates/user_pcbuildlisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        title = form.cleaned_data.get('title')
+        cpu = form.cleaned_data.get('cpu')
+        gpu = form.cleaned_data.get('gpu')
+        psu = form.cleaned_data.get('psu')
+        motherboard = form.cleaned_data.get('motherboard')
+        cpucooler = form.cleaned_data.get('cpucooler')
+        casepc = form.cleaned_data.get('casepc')
+        ram = form.cleaned_data.get('ram')
+        ram_quantity = form.cleaned_data.get('ram_quantity')
+        storage = form.cleaned_data.get('storage')
+        storage_quantity = form.cleaned_data.get('storage_quantity')
+        price = form.cleaned_data.get('price')
+
+        pc_build = form.instance.pc_build
+        pc_build.title = title
+        pc_build.cpu = cpu
+        pc_build.gpu = gpu
+        pc_build.psu = psu
+        pc_build.motherboard = motherboard
+        pc_build.cpucooler = cpucooler
+        pc_build.pc_case = casepc
+
+        rambuild = RamBuild.objects.filter(pcbuild=pc_build)
+        if rambuild:
+            rambuild.ram = ram
+            rambuild.quantity = ram_quantity
+        else:
+            RamBuild.objects.create(ram=ram, quantity=ram_quantity, pcbuild=pc_build)
+
+        storagebuild = StorageBuild.objects.filter(pcbuild=pc_build)
+        if storagebuild:
+            storagebuild.storage = storage
+            storagebuild.quantity = storage_quantity
+        else:
+            StorageBuild.objects.create(storage=storage, quantity=storage_quantity, pcbuild=pc_build)
+
+        form.instance.pc_build = pc_build
+        form.instance.price = price
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+    def test_func(self):
+        pcbuildlisting_object = self.get_object()
+        return pcbuildlisting_object.listing_seller == self.request.user
+
+
+class GpuListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own GPU listing.
+    """
+    model = GpuListing
+    form_class = UserGpuListingCreateForm
+    template_name = 'user_create_templates/user_gpulisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        gpu = form.cleaned_data['gpu']
+        gpu_brand = form.cleaned_data['gpu_brand']
+        gpu_model_new = form.cleaned_data['gpu_model_new']
+        gpu_vram = form.cleaned_data['gpu_vram']
+        gpu_clock_speed = form.cleaned_data['gpu_clock_speed']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not gpu and gpu_brand and gpu_model_new and gpu_vram and gpu_clock_speed:
+            gpu = Gpu.objects.create(
+                brand=gpu_brand,
+                gpu_model=gpu_model_new,
+                vram=gpu_vram,
+                clock_speed=gpu_clock_speed,
+            )
+        form.instance.gpu = gpu
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class PsuListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own GPU listing.
+    """
+    model = PsuListing
+    form_class = UserPsuListingCreateForm
+    template_name = 'user_create_templates/user_psulisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        psu = form.cleaned_data['psu']
+        psu_name = form.cleaned_data['psu_name']
+        psu_wattage = form.cleaned_data['psu_wattage']
+        efficiency = form.cleaned_data['efficiency']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not psu and psu_name and psu_wattage and efficiency:
+            psu = Psu.objects.create(
+                psu_name=psu_name,
+                wattage=psu_wattage,
+                efficiency=efficiency,
+            )
+        form.instance.psu = psu
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class RamListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own RAM listing.
+    """
+    model = RamListing
+    form_class = UserRamListingCreateForm
+    template_name = 'user_create_templates/user_ramlisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        ram = form.cleaned_data['ram']
+        ram_name = form.cleaned_data['ram_name']
+        ram_capacity = form.cleaned_data['ram_capacity']
+        ram_type = form.cleaned_data['ram_type']
+        ram_speed = form.cleaned_data['ram_speed']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not ram and ram_name and ram_capacity and ram_speed:
+            ram = Ram.objects.create(
+                ram_name=ram_name,
+                capacity=ram_capacity,
+                ram_type=ram_type,
+                ram_speed=ram_speed,
+            )
+        form.instance.ram = ram
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class StorageListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own storage listing.
+    """
+    model = StorageListing
+    form_class = UserStorageListingCreateForm
+    template_name = 'user_create_templates/user_storagelisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        storage = form.cleaned_data['storage']
+        storage_name = form.cleaned_data['storage_name']
+        storage_capacity = form.cleaned_data['storage_capacity']
+        storage_type = form.cleaned_data['storage_type']
+        write_speed = form.cleaned_data['write_speed']
+        read_speed = form.cleaned_data['read_speed']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not storage and storage_name and storage_capacity and write_speed and read_speed:
+            storage = Ram.objects.create(
+                storage_name=storage_name,
+                storage_type=storage_type,
+                capacity=storage_capacity,
+                write_speed=write_speed,
+                read_speed=read_speed,
+            )
+        form.instance.storage = storage
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class CasePCListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own PC case listing.
+    """
+    model = CasePCListing
+    form_class = UserCasePCListingCreateForm
+    template_name = 'user_create_templates/user_casepclisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        casepc = form.cleaned_data['casepc']
+        case_name = form.cleaned_data['case_name']
+        case_size = form.cleaned_data['case_size']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not casepc and case_name:
+            casepc = Ram.objects.create(
+                case_name=case_name,
+                case_size=case_size,
+            )
+        form.instance.case = casepc
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class MotherboardListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own motherboard listing.
+    """
+    model = MotherboardListing
+    form_class = UserMotherboardListingCreateForm
+    template_name = 'user_create_templates/user_motherboardlisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        motherboard = form.cleaned_data['motherboard']
+        motherboard_name = form.cleaned_data['motherboard_name']
+        chipset = form.cleaned_data['chipset']
+        socket_type = form.cleaned_data['socket_type']
+        ram_type = form.cleaned_data['ram_type']
+        board_size = form.cleaned_data['board_size']
+        max_ram = form.cleaned_data['max_ram']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not motherboard and motherboard_name and chipset and socket_type and max_ram:
+            motherboard = Ram.objects.create(
+                motherboard_name=motherboard_name,
+                chipset=chipset,
+                socket_type=socket_type,
+                ram_type=ram_type,
+                board_size=board_size,
+                max_ram=max_ram,
+            )
+        form.instance.motherboard = motherboard
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+class CpuCoolerListingByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    """
+    This view lets users create their own CPU cooler listing.
+    """
+    model = CpuCoolerListing
+    form_class = UserCpuCoolerListingCreateForm
+    template_name = 'user_create_templates/user_cpucoolerlisting_form.html'
+    success_url = '/pcportal/mylistings'
+
+    def form_valid(self, form):
+        cpucooler = form.cleaned_data['cpucooler']
+        cooler_name = form.cleaned_data['cooler_name']
+        max_power = form.cleaned_data['max_power']
+        fan_size = form.cleaned_data['fan_size']
+        cooler_type = form.cleaned_data['cooler_type']
+        price = form.cleaned_data['price']
+        quantity = form.cleaned_data['quantity']
+
+        if not cpucooler and cooler_name and max_power and fan_size:
+            cpucooler = Ram.objects.create(
+                cooler_name=cooler_name,
+                cooler_type=cooler_type,
+                max_power=max_power,
+                fan_size=fan_size,
+            )
+        form.instance.cpucooler = cpucooler
+        form.instance.price = price
+        form.instance.quantity = quantity
+        form.instance.listing_seller = self.request.user
+        form.instance.seller = self.request.user.seller
+        return super().form_valid(form)
+
+
+# likes view
+def like_pcbuildlistings(request, pcbuildlisting_id):
+    """
+    This function uses PC build listing's id to
+    let the user like a specific PC build listing
+    in a list page.
+    """
+    listing = get_object_or_404(PcBuildListing, id=pcbuildlisting_id)
+    user_likes = UserLikes.objects.filter(user=request.user, pcbuild_listing=listing).first()
+    if user_likes is None:
+        UserLikes.objects.create(user=request.user, pcbuild_listing=listing)
+    else:
+        user_likes.delete()
+    return redirect('pcbuild-listings')
+
+
+def like_pcbuildlisting(request, pcbuildlisting_id):
+    """
+    This function uses PC build listing's id to
+    let the user like a specific PC build listing
+    in a pc build listing detail view.
+    """
+    listing = get_object_or_404(PcBuildListing, id=pcbuildlisting_id)
+    user_likes = UserLikes.objects.filter(user=request.user, pcbuild_listing=listing).first()
+    if user_likes is None:
+        UserLikes.objects.create(user=request.user, pcbuild_listing=listing)
+    else:
+        user_likes.delete()
+    return redirect('pcbuild-listing-one', pk=listing.id)

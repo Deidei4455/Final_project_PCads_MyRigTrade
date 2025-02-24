@@ -43,8 +43,13 @@ class PcBuildListingAdmin(admin.ModelAdmin):
                      'pc_build__cpu__brand', 'pc_build__cpu__cpu_model')
 
 
+class UserLikesAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pcbuild_listing')
+
+
 # PC build
 admin.site.register(PcBuild, PcBuildAdmin)
 admin.site.register(RamBuild, RamBuildAdmin)
 admin.site.register(StorageBuild, StorageBuildAdmin)
 admin.site.register(PcBuildListing, PcBuildListingAdmin)
+admin.site.register(UserLikes, UserLikesAdmin)

@@ -15,6 +15,30 @@
             </a></p>
     </li>
 </ul>
+
+{% if user.is_authenticated %}
+    <div>
+        <h5>Leave a review about this seller</h5>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.content }}
+            <div>
+                <input type="submit" class="btn btn-dark btn-sm" value="Submit review">
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    <hr/>
+    {% for review in seller.sellerreview_set.all %}
+    <small><b>{{ review.reviewer }}</b><em>{{ review.date_created }}</em></small>
+    <p class="bg-light">{{ review.content }}</p>
+    <hr/>
+    {% endfor %}
+    {% if not seller.sellerreview_set.first %}
+    <p>Seller has no reviews</p>
+    <hr/>
+{% endif %}
+
 {% else %}
 No seller found
 {% endif %}

@@ -80,6 +80,18 @@
             {{ listing.pc_build.cpu_disp }}, {{ listing.pc_build.gpu_disp }}, {{ listing.pc_build.motherboard_disp }},
             {{ listing.pc_build.ram_disp }}  {{ listing.pc_build.storage_disp }}
         </p>
+        <p><b>User likes: {{ listing.count_likes }}</b></p>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'like-pcbuildlistings' listing.id %}">
+                {% csrf_token %}
+                {% if listing.user_liked %}
+                    <button type="submit" class="btn btn-outline-danger"><b>Unlike</b></button>
+                {% else %}
+                    <button type="submit" class="btn btn-outline-success"><b>Like</b></button>
+                {% endif %}
+            </form>
+        {% endif %}
+
         <p>{{ listing.display_seller }}
             <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
         </p>

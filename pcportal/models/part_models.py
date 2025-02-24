@@ -23,7 +23,8 @@ class Cpu(models.Model):
                                          null=True, blank=True)
     socket_type = models.CharField("CPU socket",
                                    max_length=30,
-                                   help_text="CPU socket type, (AM4, LGA 1151, etc.)")
+                                   help_text="CPU socket type, (AM4, LGA 1151, etc.)",
+                                   null=True, blank=True)
 
     def speed_display(self):
         """
@@ -142,7 +143,7 @@ class Ram(models.Model):
     )
     ram_type = models.CharField("RAM type", choices=RAM_TYPE,
                                 default='ddr4', max_length=30)
-    ram_speed = models.IntegerField("RAM speed", help_text="RAM speed, MHz")
+    ram_speed = models.IntegerField("RAM speed", help_text="RAM speed, MHz", null=True, blank=True)
 
     def ram_display(self):
         """
@@ -193,9 +194,11 @@ class Storage(models.Model):
     capacity = models.IntegerField("Storage capacity",
                                    help_text="Storage capacity in GB")
     write_speed = models.IntegerField("Write speed",
-                                      help_text="Write speed MB/s")
+                                      help_text="Write speed MB/s",
+                                      null=True, blank=True)
     read_speed = models.IntegerField("Read speed",
-                                     help_text="Read speed MB/s")
+                                     help_text="Read speed MB/s",
+                                     null=True, blank=True)
 
     def capacity_display(self):
         """
@@ -275,7 +278,8 @@ class Motherboard(models.Model):
     chipset = models.CharField("Chipset type", max_length=30,
                                help_text="Chipset type, AMD X570, Intel Z790, etc.")
     socket_type = models.CharField("Socket type", max_length=30,
-                                   help_text="CPU socket type, (AM4, LGA 1151, etc.)")
+                                   help_text="CPU socket type, (AM4, LGA 1151, etc.)",
+                                   null=True, blank=True)
     RAM_TYPE = (
         ('ddr', 'DDR'),
         ('ddr2', 'DDR2'),
@@ -299,7 +303,8 @@ class Motherboard(models.Model):
         help_text="Motherboard size, ATX, micro/mini ATX, mini-ITX, E-ATX, XL-ATX, BTX"
     )
     max_ram = models.IntegerField("Max RAM",
-                                  help_text="Max RAM capacity that motherboard can have")
+                                  help_text="Max RAM capacity that motherboard can have",
+                                  null=True, blank=True)
 
     def ram_display(self):
         """
@@ -332,8 +337,10 @@ class CpuCooler(models.Model):
     cooler_type = models.CharField("CPU cooler type", choices=COOLER_TYPE,
                                    default='air', help_text="CPU cooling type, air or liquid",
                                    max_length=30)
-    max_power = models.IntegerField("Max power", help_text="Max CPU cooler power, W")
-    fan_size = models.IntegerField("Fan size", help_text="CPU cooler fan size, mm")
+    max_power = models.IntegerField("Max power", help_text="Max CPU cooler power, W",
+                                    null=True, blank=True)
+    fan_size = models.IntegerField("Fan size", help_text="CPU cooler fan size, mm",
+                                   null=True, blank=True)
 
     def fan_size_display(self):
         """

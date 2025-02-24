@@ -246,7 +246,7 @@ class PcBuildListing(models.Model):
     price = models.FloatField("Price")
     date_created = models.DateField("Date listed", auto_now_add=True)
 
-    expiration_date = models.DateField("Expiration date", default="2100-01-01")
+    expiration_date = models.DateField("Expiration date", default="2025-03-20")
 
     PC_CONDITION = (
         ("full", "Full build"),
@@ -271,6 +271,11 @@ class PcBuildListing(models.Model):
             return "Expired"
         return "Active"
 
+    @property
+    def count_likes(self):
+        # noinspection PyUnresolvedReferences
+        return self.likes.count()
+
     def pc_name(self):
         """
         This function returns PC build's brand and model.
@@ -291,3 +296,17 @@ class PcBuildListing(models.Model):
     def __str__(self):
         return (f"{self.pc_name()} {self.date_created}. price - {self.price}, "
                 f"condition - {self.condition}, seller - {self.seller}")
+
+
+class UserLikes(models.Model):
+    """
+    This model stores 'user likes' in a
+    table, user foreign key and pc build listing,
+    each can have one like from one user.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="likes")
+    pcbuild_listing = models.ForeignKey(PcBuildListing, on_delete=models.CASCADE, blank=True, related_name="likes")
+
+    class Meta:
+        verbose_name = "User like"
+        verbose_name_plural = "User likes"

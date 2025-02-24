@@ -4,6 +4,11 @@ from PIL import Image
 
 
 class Profile(models.Model):
+    """
+    This model stores information about
+    a user's profile, let's users upload or
+    change their profile picture.
+    """
     picture = models.ImageField(upload_to='profile_pics', default='default_user.png')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 

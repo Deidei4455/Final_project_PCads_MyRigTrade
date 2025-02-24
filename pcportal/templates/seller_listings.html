@@ -336,6 +336,7 @@
                     {{ listing.pc_build.cpu_disp }}, {{ listing.pc_build.gpu_disp }}, {{ listing.pc_build.motherboard_disp }},
                     {{ listing.pc_build.ram_disp }}  {{ listing.pc_build.storage_disp }}
                     </p>
+                    <p><b>User likes: {{ listing.count_likes }}</b></p>
                     <p>
                     <a href="{% url 'pcbuild-listing-one' listing.id %}">
                     <button class="btn btn-outline-secondary btn-sm">

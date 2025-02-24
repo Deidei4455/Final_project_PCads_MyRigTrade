@@ -17,7 +17,7 @@ class PartListing(models.Model):
     """
     date_created = models.DateField("Date listed", auto_now_add=True)
 
-    expiration_date = models.DateField("Expiration date", default="2100-01-01")
+    expiration_date = models.DateField("Expiration date", default="2025-03-20")
 
     quantity = models.IntegerField("quantity",
                                    help_text="Quantity of units")

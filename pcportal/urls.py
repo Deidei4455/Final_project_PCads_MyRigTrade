@@ -11,7 +11,7 @@ urlpatterns = [
 
     # sellers
     path('sellers/', views.SellerListView.as_view(), name='sellers-all'),
-    path('sellers/<int:seller_id>', views.get_one_seller, name='seller-one'),
+    path('sellers/<int:pk>', views.SellerDetailView.as_view(), name='seller-one'),
 
     # user listings
     path('mylistings/', views.get_user_listings, name='my-listings'),
@@ -46,23 +46,54 @@ urlpatterns = [
     path('pcbuildlistings/search/', views.search_pcbuildlisting, name='search-pcbuildlisting'),
 
     # delete
-    path('mylistings/cpu/delete<int:pk>', views.CpuListingByUserDeleteView.as_view(),
+    path('mylistings/cpu/delete/<int:pk>', views.CpuListingByUserDeleteView.as_view(),
          name='user-delete-cpulisting'),
-    path('mylistings/gpu/delete<int:pk>', views.GpuListingByUserDeleteView.as_view(),
+    path('mylistings/gpu/delete/<int:pk>', views.GpuListingByUserDeleteView.as_view(),
          name='user-delete-gpulisting'),
-    path('mylistings/psu/delete<int:pk>', views.PsuListingByUserDeleteView.as_view(),
+    path('mylistings/psu/delete/<int:pk>', views.PsuListingByUserDeleteView.as_view(),
          name='user-delete-psulisting'),
-    path('mylistings/ram/delete<int:pk>', views.RamListingByUserDeleteView.as_view(),
+    path('mylistings/ram/delete/<int:pk>', views.RamListingByUserDeleteView.as_view(),
          name='user-delete-ramlisting'),
-    path('mylistings/storage/delete<int:pk>', views.StorageListingByUserDeleteView.as_view(),
+    path('mylistings/storage/delete/<int:pk>', views.StorageListingByUserDeleteView.as_view(),
          name='user-delete-storagelisting'),
-    path('mylistings/casepc/delete<int:pk>', views.CasePCListingByUserDeleteView.as_view(),
+    path('mylistings/casepc/delete/<int:pk>', views.CasePCListingByUserDeleteView.as_view(),
          name='user-delete-casepclisting'),
-    path('mylistings/motherboard/delete<int:pk>', views.MotherboardListingByUserDeleteView.as_view(),
+    path('mylistings/motherboard/delete/<int:pk>', views.MotherboardListingByUserDeleteView.as_view(),
          name='user-delete-motherboardlisting'),
-    path('mylistings/cpucooler/delete<int:pk>', views.CpuCoolerListingByUserDeleteView.as_view(),
+    path('mylistings/cpucooler/delete/<int:pk>', views.CpuCoolerListingByUserDeleteView.as_view(),
          name='user-delete-cpucoolerlisting'),
-    path('mylistings/pcbuildlisting/delete<int:pk>', views.PcBuildListingByUserDeleteView.as_view(),
+    path('mylistings/pcbuildlisting/delete/<int:pk>', views.PcBuildListingByUserDeleteView.as_view(),
          name='user-delete-pcbuildlisting'),
 
+    # update listings
+    path('mylistings/cpu/update/<int:pk>', views.CpuListingByUserUpdateView.as_view(),
+         name='user-update-cpulisting'),
+    path('mylistings/pcbuildlisting/<int:pk>', views.PcBuildListingByUserUpdateView.as_view(),
+         name='user-update-pcbuildlisting'),
+
+    # create listings
+    path('createlistings/cpulisting/', views.CpuListingByUserCreateView.as_view(),
+         name='create-cpulisting'),
+    path('createlistings/gpulisting/', views.GpuListingByUserCreateView.as_view(),
+         name='create-gpulisting'),
+    path('createlistings/psulisting/', views.PsuListingByUserCreateView.as_view(),
+         name='create-psulisting'),
+    path('createlistings/ramlisting/', views.RamListingByUserCreateView.as_view(),
+         name='create-ramlisting'),
+    path('createlistings/storagelisting/', views.StorageListingByUserCreateView.as_view(),
+         name='create-storagelisting'),
+    path('createlistings/casepclisting/', views.CasePCListingByUserCreateView.as_view(),
+         name='create-casepclisting'),
+    path('createlistings/motherboardlisting/', views.MotherboardListingByUserCreateView.as_view(),
+         name='create-motherboardlisting'),
+    path('createlistings/cpucoolerlisting/', views.CpuCoolerListingByUserCreateView.as_view(),
+         name='create-cpucoolerlisting'),
+    path('createlistings/pcbuildlisting/', views.PcBuildListingByUserCreateView.as_view(),
+         name='create-pcbuildlisting'),
+
+    # liking PC build listings
+    path('likepcbuildlistings/<int:pcbuildlisting_id>', views.like_pcbuildlistings,
+         name='like-pcbuildlistings'),
+    path('likepcbuildlisting/<int:pcbuildlisting_id>', views.like_pcbuildlisting,
+         name='like-pcbuildlisting'),
 ]
