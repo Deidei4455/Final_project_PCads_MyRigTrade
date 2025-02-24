@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if casepc_listing %}
+<h1>{{ casepc_listing.casepc.casepc_name }}</h1>
+<form method="post">
+      <ul class="list-group">
+        <li class="list-group-item">
+  {% csrf_token %}
+        <p>Date listed <em><b>{{ casepc_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ casepc_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if casepc_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ casepc_listing.exp_status }}</em></b>
+            </p>
+            <p>number of PC cases - {{ casepc_listing.quantity }}</p>
+                <p>price per one - {{ casepc_listing.price }}</p>
+        <p>{{ casepc_listing.casepc.case_name }}, {{ casepc_listing.casepc.get_case_size_display }}</p>
+
+    <div class="form-group">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+        <a class="btn btn-outline-secondary" href="{% url 'my-listings' %}">Go back</a>
+    </div>
+        </li>
+      </ul>
+</form>
+{% else %}
+No PC case listing found
+{% endif %}
+
+{% endblock %}
+{% block title %}<title>{{ casepc_listing.casepc.case_name }}</title>{% endblock %}

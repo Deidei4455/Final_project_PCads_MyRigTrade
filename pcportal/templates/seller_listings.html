@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ seller.f_name }}'s listings</h1>
+<ul class="nav nav-tabs" id="myTab" role="tablist" >
+    <li class="nav-item">
+        <a class="nav-link active" id="cpu-tab" data-toggle="tab"
+           href="#cpu" role="tab" style="color: black"><b>CPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="gpu-tab" data-toggle="tab"
+           href="#gpu" role="tab" style="color: black"><b>GPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="psu-tab" data-toggle="tab"
+           href="#psu" role="tab" style="color: black"><b>PSU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="ram-tab" data-toggle="tab"
+           href="#ram" role="tab" style="color: black"><b>RAM</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="storage-tab" data-toggle="tab"
+           href="#storage" role="tab" style="color: black"><b>Storage</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="casepc-tab" data-toggle="tab"
+           href="#casepc" role="tab" style="color: black"><b>PC case</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="motherboard-tab" data-toggle="tab"
+           href="#motherboard" role="tab" style="color: black"><b>Motherboard</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="cpucooler-tab" data-toggle="tab"
+           href="#cpucooler" role="tab" style="color: black"><b>CPU cooler</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" id="pcbuildlistings-tab" data-toggle="tab"
+           href="#pcbuildlistings" role="tab" style="color: black"><b>Pc build listings</b></a>
+        </li>
+
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="cpu" role="tabpanel">
+        {% if cpu_listings %}
+         <ul class="list-group">
+            {% for listing in cpu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of CPUs - {{ listing.quantity }}</p>
+                            <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.cpu.brand }} {{ listing.cpu.cpu_model }} {{ listing.cpu.base_clock_speed }}GHz
+                        {{ listing.cpu.socket_type }}, {{ listing.cpu.cores }} cores</p>
+                    <p>
+                    <a href="{% url 'cpu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm"><b>go to listing</b></button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No CPU listings, sorry</p>
+        {% endif %}
+    </div>
+
+        <div class="tab-pane fade" id="gpu" role="tabpanel">
+        {% if gpu_listings %}
+         <ul class="list-group">
+            {% for listing in gpu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of GPUs - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.gpu.brand }} {{ listing.gpu.gpu_model }} {{ listing.gpu.vram_display }}
+                        {{ listing.gpu.speed_display }}</p>
+                    <p>
+                    <a href="{% url 'gpu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No GPU listings, sorry </p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="psu" role="tabpanel">
+        {% if psu_listings %}
+         <ul class="list-group">
+            {% for listing in psu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of PSUs - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.psu.psu_name }}, {{ listing.psu.wattage }}W,
+                        {{ listing.psu.get_efficiency_display }}</p>
+
+                    <p>
+                    <a href="{% url 'psu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No PSU listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="ram" role="tabpanel">
+        {% if ram_listings %}
+         <ul class="list-group">
+            {% for listing in ram_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of RAM sticks - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.ram.ram_name }}, {{ listing.ram.ram_display }},
+                        {{ listing.ram.get_ram_type_display }}, {{ listing.ram.speed_display }}</p>
+
+                    <p>
+                    <a href="{% url 'ram-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No RAM listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="storage" role="tabpanel">
+        {% if storage_listings %}
+         <ul class="list-group">
+            {% for listing in storage_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                       <p>number of storage devices - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.storage.storage_name }}, {{ listing.storage.get_storage_type_display }},
+                        {{ listing.storage.capacity_display }}, {{ listing.storage.write_display }} write speed,
+                    {{ listing.storage.read_display }} read speed</p>
+
+                    <p>
+                    <a href="{% url 'storage-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+
+                </li>
+             {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No storage listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="casepc" role="tabpanel">
+        {% if casepc_listings %}
+         <ul class="list-group">
+            {% for listing in casepc_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.casepc.case_name }}, {{ listing.casepc.get_case_size_display }}</p>
+
+                    <p>
+                    <a href="{% url 'casepc-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No PC case listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="motherboard" role="tabpanel">
+        {% if motherboard_listings %}
+         <ul class="list-group">
+            {% for listing in motherboard_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                            <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.motherboard.motherboard_name }}, {{ listing.motherboard.chipset }},
+                    {{ listing.motherboard.socket_type }}, {{ listing.motherboard.get_ram_type_display }},
+                    {{ listing.motherboard.get_board_size_display }}, max RAM {{ listing.motherboard.max_ram }}GB</p>
+                    <p>
+                    <a href="{% url 'motherboard-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No motherboard listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="cpucooler" role="tabpanel">
+        {% if cpucooler_listings %}
+         <ul class="list-group">
+            {% for listing in cpucooler_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                            <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.cpucooler.cooler_name }}, {{ listing.cpucooler.get_cooler_type_display }},
+                        max power {{ listing.cpucooler.max_power }}W, fan size is {{ listing.cpucooler.fan_size }}mm</p>
+
+                    <p>
+                    <a href="{% url 'cpucooler-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+
+                </li>
+
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No CPU cooler listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="pcbuildlistings" role="tabpanel">
+        {% if pcbuild_listings %}
+         <ul class="list-group">
+            {% for listing in pcbuild_listings %}
+                <li class="list-group-item">
+                    <p>{{ listing.pc_name }}</p>
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                    </p>
+                        <p>price - {{ listing.price }}</p>
+                    <p>
+                        condition -
+                        <b style="display: inline;"
+                           class="{% if listing.condition == 'full' %} text-success
+                            {% elif listing.condition == 'incomplete' %} text-warning
+                            {% else %} text-info
+                            {% endif %}">
+                            <em>{{ listing.get_condition_display }}</em>
+                        </b>
+                    </p>
+                    <p>{{ listing.description }}</p>
+                    <p>
+                    {{ listing.pc_build.cpu_disp }}, {{ listing.pc_build.gpu_disp }}, {{ listing.pc_build.motherboard_disp }},
+                    {{ listing.pc_build.ram_disp }}  {{ listing.pc_build.storage_disp }}
+                    </p>
+                    <p>
+                    <a href="{% url 'pcbuild-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+        {% else %}
+        <p>No Pc build listings, sorry</p>
+        {% endif %}
+        </div>
+
+</div>
+
+{% endblock %}
+{% block title %}<title>{{ seller.f_name }}'s listings</title>{% endblock %}

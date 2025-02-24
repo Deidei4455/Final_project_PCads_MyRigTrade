@@ -1,0 +1,477 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+        <form
+            class="form-inline my-2 my-lg-0"
+            action="{% url 'search-partlistings' %}"
+            method="get">
+        <input class="form-control mr-sm-2"
+                type="number"
+                placeholder="Min price"
+                aria-label="Min price"
+                name="min_price"
+                step="any"/>
+        <input class="form-control mr-sm-2"
+                type="number"
+                placeholder="Max price"
+                aria-label="Max price"
+                name="max_price"
+                step="any"/>
+        <button class="btn btn-light my-2 my-sm-0" type="submit">
+            Filter
+        </button>
+    </form>
+</div>
+<h1 class="mt-4">Part listings</h1>
+<ul class="nav nav-tabs" id="myTab" role="tablist" >
+    <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'cpu' %}active{% endif %}"
+           href="?tab=cpu&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}"
+           style="color: black"><b>CPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'gpu' %}active{% endif %}"
+           href="?tab=gpu&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>GPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'psu' %}active{% endif %}"
+           href="?tab=psu&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>PSU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'ram' %}active{% endif %}"
+           href="?tab=ram&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>RAM</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'storage' %}active{% endif %}"
+           href="?tab=storage&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>Storage</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'casepc' %}active{% endif %}"
+           href="?tab=casepc&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>PC case</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'motherboard' %}active{% endif %}"
+           href="?tab=motherboard&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>Motherboard</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'cpucooler' %}active{% endif %}"
+           href="?tab=cpucooler&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}" style="color: black"><b>CPU cooler</b></a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade {% if active_tab == 'cpu' %}show active{% endif %}"
+         id="cpu" role="tabpanel">
+        {% if cpu_listings %}
+         <ul class="list-group">
+            {% for listing in cpu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of CPUs - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.cpu.brand }} {{ listing.cpu.cpu_model }} {{ listing.cpu.base_clock_speed }}GHz
+                        {{ listing.cpu.socket_type }}, {{ listing.cpu.cores }} cores</p>
+
+
+                    <p>Seller: {{ listing.display_seller }} <a href="{% url 'seller-one' listing.seller.id %}">
+                    <b>visit seller</b>
+                    </a></p>
+                    <p>
+                    <a href="{% url 'cpu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm"><b>go to listing</b></button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in cpu_listings.paginator.page_range %}
+                {% if cpu_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No CPU listings, sorry</p>
+        {% endif %}
+    </div>
+
+        <div class="tab-pane fade {% if active_tab == 'gpu' %}show active{% endif %}"
+             id="gpu" role="tabpanel">
+        {% if gpu_listings %}
+         <ul class="list-group">
+            {% for listing in gpu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of GPUs - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.gpu.brand }} {{ listing.gpu.gpu_model }} {{ listing.gpu.vram_display }}
+                        {{ listing.gpu.speed_display }}</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'gpu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in gpu_listings.paginator.page_range %}
+                {% if gpu_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No GPU listings, sorry </p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'psu' %}show active{% endif %}"
+             id="psu" role="tabpanel">
+        {% if psu_listings %}
+         <ul class="list-group">
+            {% for listing in psu_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of PSUs - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.psu.psu_name }}, {{ listing.psu.wattage }}W,
+                        {{ listing.psu.get_efficiency_display }}</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'psu-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in psu_listings.paginator.page_range %}
+                {% if psu_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No PSU listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'ram' %}show active{% endif %}"
+             id="ram" role="tabpanel">
+        {% if ram_listings %}
+         <ul class="list-group">
+            {% for listing in ram_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of RAM sticks - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.ram.ram_name }}, {{ listing.ram.ram_display }},
+                        {{ listing.ram.get_ram_type_display }}, {{ listing.ram.speed_display }}</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'ram-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in ram_listings.paginator.page_range %}
+                {% if ram_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No RAM listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'storage' %}show active{% endif %}"
+             id="storage" role="tabpanel">
+        {% if storage_listings %}
+         <ul class="list-group">
+            {% for listing in storage_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of storage devices - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.storage.storage_name }}, {{ listing.storage.get_storage_type_display }},
+                        {{ listing.storage.capacity_display }}, {{ listing.storage.write_display }} write speed,
+                    {{ listing.storage.read_display }} read speed</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'storage-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+            </ul>
+
+            <ul class="pagination">
+                {% for nr in storage_listings.paginator.page_range %}
+                {% if storage_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No storage listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'casepc' %}show active{% endif %}"
+             id="casepc" role="tabpanel">
+        {% if casepc_listings %}
+         <ul class="list-group">
+            {% for listing in casepc_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.casepc.case_name }}, {{ listing.casepc.get_case_size_display }}</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'casepc-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in casepc_listings.paginator.page_range %}
+                {% if casepc_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No PC case listings, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'motherboard' %}show active{% endif %}"
+             id="motherboard" role="tabpanel">
+        {% if motherboard_listings %}
+         <ul class="list-group">
+            {% for listing in motherboard_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.motherboard.motherboard_name }}, {{ listing.motherboard.chipset }},
+                    {{ listing.motherboard.socket_type }}, {{ listing.motherboard.get_ram_type_display }},
+                    {{ listing.motherboard.get_board_size_display }}, max RAM {{ listing.motherboard.max_ram }}GB</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'motherboard-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in motherboard_listings.paginator.page_range %}
+                {% if motherboard_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No motherboard listings, sorry</p>
+        {% endif %}
+        </div>
+
+            <div class="tab-pane fade {% if active_tab == 'cpucooler' %}show active{% endif %}"
+                 id="cpucooler" role="tabpanel">
+        {% if cpucooler_listings %}
+         <ul class="list-group">
+            {% for listing in cpucooler_listings %}
+                <li class="list-group-item">
+                    <p>Date listed <em><b>{{ listing.date_created }}</b></em>,
+                        Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+                        <b style="display: inline;"
+                        class="{% if listing.exp_status == 'Active' %} text-success
+                        {% else %} text-danger
+                        {% endif %}"><em> {{ listing.exp_status }}</em></b>
+                        </p>
+                        <p>number of PC cases - {{ listing.quantity }}</p>
+                    <p>price per one - {{ listing.price }}</p>
+                    <p>{{ listing.cpucooler.cooler_name }}, {{ listing.cpucooler.get_cooler_type_display }},
+                        max power {{ listing.cpucooler.max_power }}W, fan size is {{ listing.cpucooler.fan_size }}mm</p>
+                    <p>Seller: {{ listing.display_seller }}
+                    <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+                    </p>
+                    <p>
+                    <a href="{% url 'cpucooler-listing-one' listing.id %}">
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <b>go to listing</b>
+                    </button>
+                    </a>
+                    </p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in cpucooler_listings.paginator.page_range %}
+                {% if cpucooler_listings.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ nr }}&tab={{ active_tab }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No CPU cooler listings, sorry</p>
+        {% endif %}
+        </div>
+
+</div>
+
+
+
+{% endblock %}
+{% block title %}<title>Part listings by price</title>{% endblock %}

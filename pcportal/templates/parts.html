@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>PC part database</h2>
+<p>Data we have on pc parts</p>
+<ul class="nav nav-tabs" id="myTab" role="tablist" >
+    <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'cpu' %}active{% endif %}"
+           href="?tab=cpu" style="color: black"><b>CPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'gpu' %}active{% endif %}"
+           href="?tab=gpu" style="color: black"><b>GPU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'psu' %}active{% endif %}"
+           href="?tab=psu" style="color: black"><b>PSU</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'ram' %}active{% endif %}"
+           href="?tab=ram" style="color: black"><b>RAM</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'storage' %}active{% endif %}"
+           href="?tab=storage" style="color: black"><b>Storage</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'casepc' %}active{% endif %}"
+           href="?tab=casepc" style="color: black"><b>PC case</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'motherboard' %}active{% endif %}"
+           href="?tab=motherboard" style="color: black"><b>Motherboard</b></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link {% if active_tab == 'cpucooler' %}active{% endif %}"
+           href="?tab=cpucooler" style="color: black"><b>CPU cooler</b></a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade {% if active_tab == 'cpu' %}show active{% endif %}"
+         id="cpu" role="tabpanel">
+        {% if cpu_list %}
+         <ul class="list-group">
+            {% for cpu in cpu_list %}
+                <li class="list-group-item">
+                    <p>{{ cpu.brand }} {{ cpu.cpu_model }} {{ cpu.base_clock_speed }}GHz
+                        {{ cpu.socket_type }}, {{ cpu.cores }} cores</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in cpu_list.paginator.page_range %}
+                {% if cpu_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No CPUs</p>
+        {% endif %}
+    </div>
+
+        <div class="tab-pane fade {% if active_tab == 'gpu' %}show active{% endif %}"
+             id="gpu" role="tabpanel">
+        {% if gpu_list %}
+         <ul class="list-group">
+            {% for gpu in gpu_list %}
+                <li class="list-group-item">
+                    <p>{{ gpu.brand }} {{ gpu.gpu_model }} {{ gpu.vram_display }}
+                        {{ gpu.speed_display }}</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in gpu_list.paginator.page_range %}
+                {% if gpu_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No GPUs, sorry </p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'psu' %}show active{% endif %}"
+             id="psu" role="tabpanel">
+        {% if psu_list %}
+         <ul class="list-group">
+            {% for psu in psu_list %}
+                <li class="list-group-item">
+                    <p>{{ psu.psu_name }}, {{ psu.wattage }}W,
+                        {{ psu.get_efficiency_display }}</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in psu_list.paginator.page_range %}
+                {% if psu_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No PSUs, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'ram' %}show active{% endif %}"
+             id="ram" role="tabpanel">
+        {% if ram_list %}
+         <ul class="list-group">
+            {% for ram in ram_list %}
+                <li class="list-group-item">
+                    <p>{{ ram.ram_name }}, {{ ram.ram_display }},
+                        {{ ram.get_ram_type_display }}, {{ ram.speed_display }}</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in ram_list.paginator.page_range %}
+                {% if ram_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No RAMs, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'storage' %}show active{% endif %}"
+             id="storage" role="tabpanel">
+        {% if storage_list %}
+         <ul class="list-group">
+            {% for storage in storage_list %}
+                <li class="list-group-item">
+                    <p>{{ storage.storage_name }}, {{ storage.get_storage_type_display }},
+                        {{ storage.capacity_display }}, {{ storage.write_display }} write speed,
+                    {{ storage.read_display }} read speed</p>
+                </li>
+             {% endfor %}
+            </ul>
+
+            <ul class="pagination">
+                {% for nr in storage_list.paginator.page_range %}
+                {% if storage_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No storage devices, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'casepc' %}show active{% endif %}"
+             id="casepc" role="tabpanel">
+        {% if casepc_list %}
+         <ul class="list-group">
+            {% for casepc in casepc_list %}
+                <li class="list-group-item">
+                    <p>{{ casepc.case_name }}, {{ casepc.get_case_size_display }}</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in casepc_list.paginator.page_range %}
+                {% if casepc_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No PC cases, sorry</p>
+        {% endif %}
+        </div>
+
+        <div class="tab-pane fade {% if active_tab == 'motherboard' %}show active{% endif %}"
+             id="motherboard" role="tabpanel">
+        {% if motherboard_list %}
+         <ul class="list-group">
+            {% for motherboard in motherboard_list %}
+                <li class="list-group-item">
+                    <p>{{ motherboard.motherboard_name }}, {{ motherboard.chipset }},
+                    {{ motherboard.socket_type }}, {{ motherboard.get_ram_type_display }},
+                    {{ motherboard.get_board_size_display }}, max RAM {{ motherboard.max_ram }}GB</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in motherboard_list.paginator.page_range %}
+                {% if motherboard_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No motherboards, sorry</p>
+        {% endif %}
+        </div>
+
+            <div class="tab-pane fade {% if active_tab == 'cpucooler' %}show active{% endif %}"
+                 id="cpucooler" role="tabpanel">
+        {% if cpucooler_list %}
+         <ul class="list-group">
+            {% for cpucooler in cpucooler_list %}
+                <li class="list-group-item">
+                    <p>{{ cpucooler.cooler_name }}, {{ cpucooler.get_cooler_type_display }},
+                        max power {{ cpucooler.max_power }}W, fan size is {{ cpucooler.fan_size }}mm</p>
+                </li>
+             {% endfor %}
+         </ul>
+
+            <ul class="pagination">
+                {% for nr in cpucooler_list.paginator.page_range %}
+                {% if cpucooler_list.number == nr %}
+                    <li class="page-item active">
+                        <a class="page-link">{{ nr }}</a>
+                     </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ nr }}&tab={{ active_tab }}">{{ nr }}</a>
+                    </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+        <p>No CPU coolers, sorry</p>
+        {% endif %}
+        </div>
+
+</div>
+
+
+
+{% endblock %}
+{% block title %}<title>Parts list</title>{% endblock %}

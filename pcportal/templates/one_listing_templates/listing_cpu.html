@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if cpu_listing %}
+<h1>{{ cpu_listing.cpu.cpu_model }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+        <li class="list-group-item">
+        <p>Date listed <em><b>{{ cpu_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ cpu_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if cpu_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ cpu_listing.exp_status }}</em></b>
+            </p>
+                <p>number of CPUs - {{ cpu_listing.quantity }}</p>
+                    <p>price per one - {{ cpu_listing.price }}</p>
+            <p>{{ cpu_listing.cpu.brand }} {{ cpu_listing.cpu.cpu_model }} {{ cpu_listing.cpu.base_clock_speed }}GHz
+                {{ cpu_listing.cpu.socket_type }}, {{ cpu_listing.cpu.cores }} cores</p>
+            <p>Seller: {{ cpu_listing.display_seller }}
+            <a href="{% url 'seller-one' cpu_listing.seller.id %}"><b>visit seller</b>
+            </a>
+            </p>
+        </li>
+
+</ul>
+{% else %}
+No CPU listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ cpu_listing.cpu.cpu_model }}</title>{% endblock %}

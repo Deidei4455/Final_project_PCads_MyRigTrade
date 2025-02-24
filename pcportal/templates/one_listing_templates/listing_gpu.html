@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if gpu_listing %}
+<h1>{{ gpu_listing.gpu.gpu_model }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+        <li class="list-group-item">
+        <p>Date listed <em><b>{{ gpu_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ gpu_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if gpu_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ gpu_listing.exp_status }}</em></b>
+            </p>
+                <p>number of GPUs - {{ gpu_listing.quantity }}</p>
+                    <p>price per one - {{ gpu_listing.price }}</p>
+            <p>{{ gpu_listing.gpu.brand }} {{ gpu_listing.gpu.gpu_model }} {{ gpu_listing.gpu.vram_display }}
+              {{ gpu_listing.gpu.speed_display }}</p>
+            <p>Seller: {{ gpu_listing.display_seller }}
+            <a href="{% url 'seller-one' gpu_listing.seller.id %}"><b>visit seller</b>
+            </a>
+            </p>
+        </li>
+
+</ul>
+{% else %}
+No GPU listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ gpu_listing.gpu.gpu_model }}</title>{% endblock %}

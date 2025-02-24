@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1><b>MyRig Trade</b></h1>
+{% if user.username %}
+<h4>Welcome, {{ user.username }}</h4>
+{% else %}
+<h4>Welcome</h4>
+{% endif %}
+<hr/>
+<h3>MyRig Trader statistics:</h3>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Quantity</th>
+    </tr>
+    <tr> <td>Total PC parts in database at the moment</td> <td>{{ num_parts }}</td> </tr>
+    <tr> <td>Total part listings listed</td> <td>{{ num_listings }}</td> </tr>
+    <tr> <td>Total PC builds</td> <td>{{ num_pc_builds }}</td> </tr>
+    <tr> <td>Total PC builds listed</td> <td>{{ num_pc_build_listings }}</td> </tr>
+    <tr> <td>Currently sellers in MyRig</td> <td>{{ num_sellers }}</td> </tr>
+</table>
+<hr/>
+
+<p>Visit times - {{ num_visits }}</p>
+{% endblock %}

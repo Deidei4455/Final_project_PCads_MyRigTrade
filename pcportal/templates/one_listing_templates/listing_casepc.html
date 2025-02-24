@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if casepc_listing %}
+<h1>{{ casepc_listing.casepc.casepc_name }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+    <li class="list-group-item">
+        <p>Date listed <em><b>{{ casepc_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ casepc_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if casepc_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ casepc_listing.exp_status }}</em></b>
+            </p>
+            <p>number of PC cases - {{ casepc_listing.quantity }}</p>
+                <p>price per one - {{ casepc_listing.price }}</p>
+        <p>{{ casepc_listing.casepc.case_name }}, {{ casepc_listing.casepc.get_case_size_display }}</p>
+        <p>Seller: {{ casepc_listing.display_seller }}
+        <a href="{% url 'seller-one' casepc_listing.seller.id %}"><b>visit seller</b>
+        </a>
+        </p>
+    </li>
+
+</ul>
+{% else %}
+No PC case listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ casepc_listing.casepc.casepc_name }}</title>{% endblock %}

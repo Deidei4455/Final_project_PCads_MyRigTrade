@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if motherboard_listing %}
+<h1>{{ motherboard_listing.motherboard.motherboard_name }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+        <li class="list-group-item">
+        <p>Date listed <em><b>{{ motherboard_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ motherboard_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if motherboard_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ motherboard_listing.exp_status }}</em></b>
+            </p>
+                <p>number of motherboards - {{ motherboard_listing.quantity }}</p>
+                    <p>price per one - {{ motherboard_listing.price }}</p>
+            <p>{{ motherboard_listing.motherboard.motherboard_name }},
+              {{ motherboard_listing.motherboard.chipset }},
+              {{ motherboard_listing.motherboard.socket_type }},
+              {{ motherboard_listing.motherboard.get_ram_type_display }},
+              {{ motherboard_listing.motherboard.get_board_size_display }},
+              max RAM {{ motherboard_listing.motherboard.max_ram }}GB
+              <p>Seller: {{ motherboard_listing.display_seller }}
+            <a href="{% url 'seller-one' motherboard_listing.seller.id %}"><b>visit seller</b>
+            </a>
+            </p>
+        </li>
+
+</ul>
+{% else %}
+No motherboard listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ motherboard_listing.motherboard.motherboard_name }}</title>{% endblock %}

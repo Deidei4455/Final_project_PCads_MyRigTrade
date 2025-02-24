@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ seller.f_name }}</h1>
+<p>{{ seller.f_name }}'s details are bellow</p>
+{% if seller %}
+<ul class="list-group">
+
+    <li class="list-group-item">
+        <p>{{ seller.f_name }} {{ seller.l_name }}</p>
+        <p>{{ seller.email }}, phone number - {{ seller.phone_num }}</p>
+        <p>This seller has a total of {{ seller.count_all_listings }} listings listed on this site</p>
+        <p><a href="{% url 'seller-listings' seller.id %}">
+            <button class="btn btn-outline-secondary btn-sm"><b>See {{ seller.f_name }}'s listings</b></button>
+            </a></p>
+    </li>
+</ul>
+{% else %}
+No seller found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ seller.f_name }}</title>{% endblock %}

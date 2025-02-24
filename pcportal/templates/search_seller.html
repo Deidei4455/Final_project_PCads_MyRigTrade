@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+        <form
+            class="form-inline my-2 my-lg-0"
+            action="{% url 'search-seller' %}"
+            method="get">
+        <input class="form-control mr-sm-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                name="search_text"/>
+        <button class="btn btn-light my-2 my-sm-0" type="submit">
+            Search
+        </button>
+    </form>
+</div>
+<h3 class="mt-4">{{ search_count }} sellers have been found by search:</h3>
+{% if sellers_list %}
+<ul class="list-group">
+    {% for seller in sellers_list %}
+    <li class="list-group-item">
+        <p>{{ seller.f_name }} {{ seller.l_name }}</p>
+        <p>{{ seller.email }}, phone number - {{ seller.phone_num }}</p>
+        <p><a href="{% url 'seller-one' seller.id %}">
+            <button class="btn btn-outline-secondary btn-sm"><b>visit seller</b></button>
+            </a></p>
+    {% endfor %}
+    </li>
+</ul>
+{% else %}
+No sellers found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ search_count }} results</title>{% endblock %}

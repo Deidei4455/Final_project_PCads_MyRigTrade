@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if psu_listing %}
+<h1>{{ psu_listing.psu.psu_name }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+    <li class="list-group-item">
+            <p>Date listed <em><b>{{ psu_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ psu_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if psu_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ psu_listing.exp_status }}</em></b>
+            </p>
+            <p>number of PSUs - {{ psu_listing.quantity }}</p>
+                <p>price per one - {{ psu_listing.price }}</p>
+        <p>{{ psu_listing.psu.psu_name }}, {{ psu_listing.psu.wattage }}W,
+          {{ psu_listing.psu.get_efficiency_display }}</p>
+        <p>Seller: {{ psu_listing.display_seller }}
+        <a href="{% url 'seller-one' psu_listing.seller.id %}"><b>visit seller</b>
+        </a>
+        </p>
+    </li>
+
+</ul>
+{% else %}
+No PSU listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ psu_listing.psu.psu_name }}</title>{% endblock %}

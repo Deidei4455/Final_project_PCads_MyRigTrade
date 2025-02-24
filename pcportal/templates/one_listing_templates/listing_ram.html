@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if ram_listing %}
+<h1>{{ ram_listing.ram.ram_name }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+    <li class="list-group-item">
+            <p>Date listed <em><b>{{ ram_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ ram_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if ram_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ ram_listing.exp_status }}</em></b>
+            </p>
+            <p>number of RAM sticks - {{ ram_listing.quantity }}</p>
+                <p>price per one - {{ ram_listing.price }}</p>
+        <p>{{ ram_listing.ram.ram_name }}, {{ ram_listing.ram.ram_display }},
+          {{ ram_listing.ram.get_ram_type_display }}, {{ ram_listing.ram.speed_display }}</p>
+        <p>Seller: {{ ram_listing.display_seller }}
+        <a href="{% url 'seller-one' ram_listing.seller.id %}"><b>visit seller</b>
+        </a>
+        </p>
+    </li>
+
+</ul>
+{% else %}
+No RAM listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ ram_listing.ram.ram_name }}</title>{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if pcbuildlisting %}
+<h1>{{ pcbuildlisting.pc_name }}</h1>
+<form method="post">
+      <ul class="list-group">
+        <li class="list-group-item">
+  {% csrf_token %}
+        <p>{{ pcbuildlisting.pc_name }}</p>
+            <p>Date listed <em><b>{{ pcbuildlisting.date_created }}</b></em>,
+            Expiration date - <em><b>{{ pcbuildlisting.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if pcbuildlisting.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ pcbuildlisting.exp_status }}</em></b>
+            </p>
+    <p>
+        price - {{ pcbuildlisting.price }}</p>
+    <p>
+        conditon -
+        <b style="display: inline;"
+            class="{% if pcbuildlisting.condition == 'full' %} text-success
+        {% elif pcbuildlisting.condition == 'incomplete' %} text-warning
+        {% else %} text-info
+        {% endif %}"><em>{{ pcbuildlisting.get_condition_display }}</em></b>
+    </p>
+        <p>
+            {{ pcbuildlisting.pc_build.cpu_disp }}, {{ pcbuildlisting.pc_build.gpu_disp }},
+            {{ pcbuildlisting.pc_build.motherboard_disp }},
+            {{ pcbuildlisting.pc_build.ram_disp }}  {{ pcbuildlisting.pc_build.storage_disp }}
+        </p>
+        <p>{{ pcbuildlisting.description }}</p>
+
+    <div class="form-group">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+        <a class="btn btn-outline-secondary" href="{% url 'my-listings' %}">Go back</a>
+    </div>
+        <table>
+            <tr>
+                <th colspan="2">CPU</th>
+            </tr>
+            <tr> <td>Brand</td> <td>{{ pcbuildlisting.pc_build.cpu.brand }}</td> </tr>
+            <tr> <td>Model</td> <td>{{ pcbuildlisting.pc_build.cpu.cpu_model }}</td> </tr>
+            <tr> <td>Number of cores</td> <td>{{ pcbuildlisting.pc_build.cpu.cores}}</td> </tr>
+            <tr> <td>Base clock speed</td> <td>{{ pcbuildlisting.pc_build.cpu.speed_display }}</td> </tr>
+            <tr> <td>Socket type</td> <td>{{ pcbuildlisting.pc_build.cpu.socket_type }}</td> </tr>
+
+            <tr>
+                <th colspan="2">GPU</th>
+            </tr>
+            <tr> <td>Brand</td> <td>{{ pcbuildlisting.pc_build.gpu.brand }}</td> </tr>
+            <tr> <td>Model</td> <td>{{ pcbuildlisting.pc_build.gpu.gpu_model }}</td> </tr>
+            <tr> <td>VRAM</td> <td>{{ pcbuildlisting.pc_build.gpu.vram_display }}</td> </tr>
+            <tr> <td>Clock speed</td> <td>{{ pcbuildlisting.pc_build.gpu.speed_display }}</td> </tr>
+
+            <tr>
+                <th colspan="2">Motherboard</th>
+            </tr>
+            <tr> <td>Name</td> <td>{{ pcbuildlisting.pc_build.motherboard.motherboard_name }}</td> </tr>
+            <tr> <td>Chipset</td> <td>{{ pcbuildlisting.pc_build.motherboard.chipset }}</td> </tr>
+            <tr> <td>Socket type</td> <td>{{ pcbuildlisting.pc_build.motherboard.socket_type}}</td> </tr>
+            <tr> <td>Ram type</td> <td>{{ pcbuildlisting.pc_build.motherboard.get_ram_type_display }}</td> </tr>
+            <tr> <td>Board size</td> <td>{{ pcbuildlisting.pc_build.motherboard.get_board_size_display }}</td> </tr>
+            <tr> <td>Maximum ram capacity</td> <td>{{ pcbuildlisting.pc_build.motherboard.ram_display }}</td> </tr>
+
+            <tr>
+                <th colspan="2">PSU</th>
+            </tr>
+            <tr> <td>PSU name</td> <td>{{ pcbuildlisting.pc_build.psu.psu_name }}</td> </tr>
+            <tr> <td>Wattage</td> <td>{{ pcbuildlisting.pc_build.psu.wattage }}W</td> </tr>
+            <tr> <td>Efficiency rating</td> <td>{{ pcbuildlisting.pc_build.psu.get_efficiency_display }}</td> </tr>
+
+            <tr>
+                <th colspan="2">CPU cooler</th>
+            </tr>
+            <tr> <td>Cooler name</td> <td>{{ pcbuildlisting.pc_build.cpucooler.cooler_name }}</td> </tr>
+            <tr> <td>Cooler type</td> <td>{{ pcbuildlisting.pc_build.cpucooler.get_cooler_type_display }}</td> </tr>
+            <tr> <td>Maximum cooler power</td> <td>{{ pcbuildlisting.pc_build.cpucooler.max_power }}W</td> </tr>
+            <tr> <td>Fan size</td> <td>{{ pcbuildlisting.pc_build.cpucooler.fan_size }}mm</td> </tr>
+
+            {% if pcbuildlisting.pc_build.ram.all %}
+                    <tr>
+                        <th colspan="2">RAM</th>
+                    </tr>
+                {% for rams in pcbuildlisting.pc_build.ram.all %}
+                    <tr> <td colspan="2"><b><em>{{ rams.ram.ram_name }}</em></b></td></tr>
+                    <tr> <td>Capacity</td> <td>{{ rams.quantity }}x{{ rams.ram_capacity }}</td> </tr>
+                    <tr> <td>Type</td> <td>{{ rams.ram.get_ram_type_display }}</td> </tr>
+                    <tr> <td>Speed</td> <td>{{ rams.ram.speed_display }}</td> </tr>
+
+                {% endfor %}
+            {% else %}
+                    <tr><th colspan="2">RAM</th></tr>
+                <tr> <td colspan="2">No RAM modules</td> </tr>
+            {% endif %}
+
+            {% if pcbuildlisting.pc_build.storage.all %}
+                    <tr>
+                        <th colspan="2">Storage</th>
+                    </tr>
+                {% for storages in pcbuildlisting.pc_build.storage.all %}
+                    <tr> <td colspan="2"><b><em>{{ storages.storage.storage_name }}</em></b></td> </tr>
+                    <tr> <td>Capacity</td> <td>{{ storages.quantity }}x{{ storages.storage.capacity_display }}</td> </tr>
+                    <tr> <td>Type</td> <td>{{ storages.storage.get_storage_type_display }}</td> </tr>
+                    <tr> <td>Write speed</td> <td>{{ storages.storage.write_display }}</td> </tr>
+                    <tr> <td>Read speed</td> <td>{{ storages.storage.read_display }}</td> </tr>
+
+                {% endfor %}
+            {% else %}
+                    <tr><th colspan="2">Storage</th></tr>
+                <tr> <td colspan="2">No storage devices</td> </tr>
+            {% endif %}
+
+            <tr>
+                <th colspan="2">PC case</th>
+            </tr>
+            <tr> <td>Brand</td> <td>{{ pcbuildlisting.pc_build.pc_case.case_name }}</td> </tr>
+            <tr> <td>Clock speed</td> <td>{{ pcbuildlisting.pc_build.pc_case.get_case_size_display }}</td> </tr>
+
+        </table>
+
+    <div class="form-group">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+        <a class="btn btn-outline-secondary" href="{% url 'my-listings' %}">Go back</a>
+    </div>
+        </li>
+      </ul>
+</form>
+{% else %}
+No PC build listing found
+{% endif %}
+
+{% endblock %}
+{% block title %}<title>{{ pcbuildlisting.pc_name }}</title>{% endblock %}

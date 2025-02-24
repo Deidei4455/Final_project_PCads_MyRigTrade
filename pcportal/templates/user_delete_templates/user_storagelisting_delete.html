@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if storage_listing %}
+<h1>{{ storage_listing.storage.storage_name }}</h1>
+<form method="post">
+      <ul class="list-group">
+        <li class="list-group-item">
+  {% csrf_token %}
+            <p>Date listed <em><b>{{ storage_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ storage_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if storage_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ storage_listing.exp_status }}</em></b>
+            </p>
+                <p>number of storage devices - {{ storage_listing.quantity }}</p>
+                    <p>price per one - {{ storage_listing.price }}</p>
+            <p>{{ storage_listing.storage.storage_name }},
+              {{ storage_listing.storage.get_storage_type_display }},
+              {{ storage_listing.storage.capacity_display }},
+              {{ storage_listing.storage.write_display }} write speed,
+              {{ storage_listing.storage.read_display }} read speed</p>
+
+    <div class="form-group">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+        <a class="btn btn-outline-secondary" href="{% url 'my-listings' %}">Go back</a>
+    </div>
+        </li>
+      </ul>
+</form>
+{% else %}
+No storage device listing found
+{% endif %}
+
+{% endblock %}
+{% block title %}<title>{{ storage_listing.storage.storage_name }}</title>{% endblock %}

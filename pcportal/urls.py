@@ -1,0 +1,68 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # main
+    path('', views.index, name='index_n'),
+
+    # user profile
+    path('register/', views.register_user, name='register'),
+    path('profile/', views.get_user_profile, name='user-profile'),
+
+    # sellers
+    path('sellers/', views.SellerListView.as_view(), name='sellers-all'),
+    path('sellers/<int:seller_id>', views.get_one_seller, name='seller-one'),
+
+    # user listings
+    path('mylistings/', views.get_user_listings, name='my-listings'),
+    # seller listings
+    path('sellers/<int:seller_id>/pcbuildlistings/', views.get_seller_listings, name='seller-listings'),
+
+    # all listings
+    path('partlistings/', views.get_part_listings, name='part-listings'),
+    path('pcbuildlistings/', views.PcBuildListingListView.as_view(), name='pcbuild-listings'),
+
+    # all parts list
+    path('parts/', views.get_all_parts, name='part-list'),
+
+    # individual listings
+    path('pcbuildlistings/<int:pk>', views.PcBuildListingDetailView.as_view(), name='pcbuild-listing-one'),
+    path('partlistings/cpu/<int:pk>', views.CpuListingDetailView.as_view(), name='cpu-listing-one'),
+    path('partlistings/gpu/<int:pk>', views.GpuListingDetailView.as_view(), name='gpu-listing-one'),
+    path('partlistings/psu/<int:pk>', views.PsuListingDetailView.as_view(), name='psu-listing-one'),
+    path('partlistings/ram/<int:pk>', views.RamListingDetailView.as_view(), name='ram-listing-one'),
+    path('partlistings/storage/<int:pk>',
+         views.StorageListingDetailView.as_view(), name='storage-listing-one'),
+    path('partlistings/casepc/<int:pk>',
+         views.CasePCListingDetailView.as_view(), name='casepc-listing-one'),
+    path('partlistings/motherboard/<int:pk>',
+         views.MotherboardListingDetailView.as_view(), name='motherboard-listing-one'),
+    path('partlistings/cpucooler/<int:pk>',
+         views.CpuCoolerListingDetailView.as_view(), name='cpucooler-listing-one'),
+
+    # search
+    path('sellers/search/', views.search_seller, name='search-seller'),
+    path('partlistings/search/', views.search_part_listings_by_price, name='search-partlistings'),
+    path('pcbuildlistings/search/', views.search_pcbuildlisting, name='search-pcbuildlisting'),
+
+    # delete
+    path('mylistings/cpu/delete<int:pk>', views.CpuListingByUserDeleteView.as_view(),
+         name='user-delete-cpulisting'),
+    path('mylistings/gpu/delete<int:pk>', views.GpuListingByUserDeleteView.as_view(),
+         name='user-delete-gpulisting'),
+    path('mylistings/psu/delete<int:pk>', views.PsuListingByUserDeleteView.as_view(),
+         name='user-delete-psulisting'),
+    path('mylistings/ram/delete<int:pk>', views.RamListingByUserDeleteView.as_view(),
+         name='user-delete-ramlisting'),
+    path('mylistings/storage/delete<int:pk>', views.StorageListingByUserDeleteView.as_view(),
+         name='user-delete-storagelisting'),
+    path('mylistings/casepc/delete<int:pk>', views.CasePCListingByUserDeleteView.as_view(),
+         name='user-delete-casepclisting'),
+    path('mylistings/motherboard/delete<int:pk>', views.MotherboardListingByUserDeleteView.as_view(),
+         name='user-delete-motherboardlisting'),
+    path('mylistings/cpucooler/delete<int:pk>', views.CpuCoolerListingByUserDeleteView.as_view(),
+         name='user-delete-cpucoolerlisting'),
+    path('mylistings/pcbuildlisting/delete<int:pk>', views.PcBuildListingByUserDeleteView.as_view(),
+         name='user-delete-pcbuildlisting'),
+
+]

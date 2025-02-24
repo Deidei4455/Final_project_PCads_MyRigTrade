@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if cpu_listing %}
+<h1>{{ cpu_listing.cpu.cpu_model }}</h1>
+<form method="post">
+    <ul class="list-group">
+        <li class="list-group-item">
+  {% csrf_token %}
+        <p>Date listed <em><b>{{ cpu_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ cpu_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if cpu_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ cpu_listing.exp_status }}</em></b>
+            </p>
+          <p>number of CPUs - {{ cpu_listing.quantity }}</p>
+              <p>price per one - {{ cpu_listing.price }}</p>
+      <p>{{ cpu_listing.cpu.brand }} {{ cpu_listing.cpu.cpu_model }}
+        {{ cpu_listing.cpu.base_clock_speed }}GHz
+          {{ cpu_listing.cpu.socket_type }}, {{ cpu_listing.cpu.cores }} cores</p>
+
+    <div class="form-group">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+        <a class="btn btn-outline-secondary" href="{% url 'my-listings' %}">Go back</a>
+    </div>
+        </li>
+    </ul>
+</form>
+{% else %}
+No CPU listing found
+{% endif %}
+
+{% endblock %}
+{% block title %}<title>{{ cpu_listing.cpu.cpu_model }}</title>{% endblock %}

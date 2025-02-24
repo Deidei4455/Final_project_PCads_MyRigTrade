@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+        <form
+            class="form-inline my-2 my-lg-0"
+            action="{% url 'search-seller' %}"
+            method="get">
+        <input class="form-control mr-sm-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                name="search_text"/>
+        <button class="btn btn-light my-2 my-sm-0" type="submit">
+            Search
+        </button>
+    </form>
+</div>
+<h2 class="mt-4">All registered sellers are listed bellow</h2>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">
+                <button class="btn btn-dark btn-sm text-black"><b>1</b></button>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}">
+                <button class="btn btn-dark btn-sm text-black"><b>back</b></button>
+            </a>
+        {% endif %}
+        <span class="current">
+            <b>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</b>
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+                <button class="btn btn-dark btn-sm text-black"><b>next</b></button>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">
+                <button class="btn btn-dark btn-sm text-black"><b>last</b></button>
+            </a>
+        {% endif %}
+    </span>
+</div>
+{% if sellers_list %}
+<ul class="list-group">
+    {% for seller in sellers_list %}
+    <li class="list-group-item">
+        <p>{{ seller.f_name }} {{ seller.l_name }}</p>
+        <p>{{ seller.email }}, phone number - {{ seller.phone_num }}</p>
+        <p><a href="{% url 'seller-one' seller.id %}">
+            <button class="btn btn-outline-secondary btn-sm"><b>visit seller</b></button>
+            </a></p>
+    {% endfor %}
+    </li>
+</ul>
+{% else %}
+No sellers found
+{% endif %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">
+                <button class="btn btn-dark btn-sm text-black"><b>1</b></button>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}">
+                <button class="btn btn-dark btn-sm text-black"><b>back</b></button>
+            </a>
+        {% endif %}
+        <span class="current">
+            <b>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</b>
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+                <button class="btn btn-dark btn-sm text-black"><b>next</b></button>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">
+                <button class="btn btn-dark btn-sm text-black"><b>last</b></button>
+            </a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
+{% block title %}<title>Sellers</title>{% endblock %}

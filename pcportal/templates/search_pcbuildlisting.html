@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+        <form
+            class="form-inline my-2 my-lg-0"
+            action="{% url 'search-pcbuildlisting' %}"
+            method="get">
+        <input class="form-control mr-sm-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                name="search_text"/>
+        <input class="form-control mr-sm-2"
+                type="number"
+                placeholder="Min price"
+                aria-label="Min price"
+                name="min_price"
+                step="any"/>
+        <input class="form-control mr-sm-2"
+                type="number"
+                placeholder="Max price"
+                aria-label="Max price"
+                name="max_price"
+                step="any"/>
+        <button class="btn btn-light my-2 my-sm-0" type="submit">
+            Search
+        </button>
+    </form>
+</div>
+<h3 class="mt-4">{{ search_count }} PC build listings have been found by search:</h3>
+
+{% if pcbuildlistings %}
+<ul class="list-group">
+    {% for listing in pcbuildlistings %}
+    <li class="list-group-item">
+        <p>{{ listing.pc_name }}</p>
+        <p>
+            Date listed <em><b>{{ listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ listing.exp_status }}</em></b>
+        <p>
+        price - {{ listing.price }}</p>
+    <p>
+        condition -
+        <b style="display: inline;"
+            class="{% if listing.condition == 'full' %} text-success
+        {% elif listing.condition == 'incomplete' %} text-warning
+        {% else %} text-info
+        {% endif %}"><em>{{ listing.get_condition_display }}</em></b>
+    </p>
+        <p>{{ listing.description }}</p>
+        <p>
+            {{ listing.pc_build.cpu_disp }}, {{ listing.pc_build.gpu_disp }}, {{ listing.pc_build.motherboard_disp }},
+            {{ listing.pc_build.ram_disp }}  {{ listing.pc_build.storage_disp }}
+        </p>
+        <p>{{ listing.display_seller }}
+            <a href="{% url 'seller-one' listing.seller.id %}"><b>visit seller</b></a>
+        </p>
+        <p>
+        <a href="{% url 'pcbuild-listing-one' listing.id %}">
+        <button class="btn btn-outline-secondary btn-sm">
+            <b>go to listing</b>
+        </button>
+        </a>
+        </p>
+
+    </li>
+
+    {% endfor %}
+</ul>
+{% else %}
+No listings found
+{% endif %}
+
+{% endblock %}
+{% block title %}<title>{{ search_count }} results</title>{% endblock %}

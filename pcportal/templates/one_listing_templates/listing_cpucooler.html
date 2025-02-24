@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if cpucooler_listing %}
+<h1>{{ cpucooler_listing.cpucooler.cooler_name }}</h1>
+<p>Listing details are bellow:</p>
+<ul class="list-group">
+
+        <li class="list-group-item">
+        <p>Date listed <em><b>{{ cpucooler_listing.date_created }}</b></em>,
+            Expiration date - <em><b>{{ cpucooler_listing.expiration_date }}</b></em>,
+            <b style="display: inline;"
+            class="{% if cpucooler_listing.exp_status == 'Active' %} text-success
+            {% else %} text-danger
+            {% endif %}"><em> {{ cpucooler_listing.exp_status }}</em></b>
+            </p>
+                <p>number of CPU coolers - {{ cpucooler_listing.quantity }}</p>
+            <p>price per one - {{ cpucooler_listing.price }}</p>
+            <p>{{ cpucooler_listing.cpucooler.cooler_name }},
+              {{ cpucooler_listing.cpucooler.get_cooler_type_display }},
+              max power {{ cpucooler_listing.cpucooler.max_power }}W,
+              fan size is {{ cpucooler_listing.cpucooler.fan_size }}mm</p>
+              <p>Seller: {{ cpucooler_listing.display_seller }}
+            <a href="{% url 'seller-one' cpucooler_listing.seller.id %}"><b>visit seller</b>
+            </a>
+            </p>
+        </li>
+
+</ul>
+{% else %}
+No CPU cooler listing found
+{% endif %}
+{% endblock %}
+{% block title %}<title>{{ cpucooler_listing.cpucooler.cooler_name }}</title>{% endblock %}
