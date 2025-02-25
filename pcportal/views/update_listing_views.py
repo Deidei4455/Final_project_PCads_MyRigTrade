@@ -323,6 +323,12 @@ class PcBuildListingByUserUpdateView(LoginRequiredMixin, UserPassesTestMixin, ge
     success_url = '/pcportal/mylistings'
 
     def get_initial(self):
+        """
+        This function retrieves PC build listing's
+        information like what parts that PC build
+        has, title and other. Then it prefills all those
+        values when trying to update a PC build listing
+        """
         prefill = super().get_initial()
         pcbuild_listing = self.get_object()
         pcbuild = pcbuild_listing.pc_build
