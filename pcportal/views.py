@@ -379,6 +379,8 @@ def search_seller(request):
     and returns all search results in a page.
     """
     query_text = request.GET.get('search_text')
+    if not query_text:
+        return redirect("sellers-all")
     sellers_list = Seller.objects.filter(Q(f_name__icontains=query_text) |
                                          Q(l_name__icontains=query_text) |
                                          Q(email__icontains=query_text))

@@ -16,7 +16,20 @@
         </button>
     </form>
 </div>
-<h3 class="mt-4">{{ search_count }} sellers have been found by search:</h3>
+
+{% if query_text %}
+    <h3 class="mt-4">{{ search_count }} sellers have been found:</h3>
+    <p class="d-inline">
+    {% if query_text %}
+        search text: {{ query_text }}
+    {% endif %}
+    <a class="nav-link d-inline ms-2" href="{% url 'sellers-all' %}">
+    <button class="btn btn-light btn-sm "><b>reset</b></button>
+    </a>
+    </p>
+{% endif %}
+
+
 {% if sellers_list %}
 <ul class="list-group">
     {% for seller in sellers_list %}
