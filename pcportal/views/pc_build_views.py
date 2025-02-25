@@ -18,6 +18,12 @@ class PcBuildListingListView(generic.ListView):
     paginate_by = 6
 
     def get_context_data(self, **kwargs):
+        """
+        This function checks if a user has liked
+        the pc build listing, also check if a user
+        is even logged in, without that the page would
+        crash.
+        """
         context = super().get_context_data(**kwargs)
         user = self.request.user
         if user.is_authenticated:
@@ -38,6 +44,12 @@ class PcBuildListingDetailView(generic.DetailView):
     template_name = 'one_listing_templates/listing_pcbuild.html'
 
     def get_context_data(self, **kwargs):
+        """
+        This function checks if a user has liked
+        the pc build listing, also check if a user
+        is even logged in, without that the page would
+        crash.
+        """
         context = super().get_context_data(**kwargs)
         user = self.request.user
         listing = context['pcbuildlisting']

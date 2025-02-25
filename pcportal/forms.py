@@ -81,6 +81,12 @@ class UserCpuListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right cpu data, checks price and quantity, checks that
+        only a cpus is chosen or a new cpu is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         cpu = cleaned_data.get('cpu')
         cpu_brand = cleaned_data.get('cpu_brand')
@@ -136,6 +142,12 @@ class UserGpuListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right GPU data, checks price and quantity, checks that
+        only a GPU is chosen or a new GPU is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         gpu = cleaned_data.get('gpu')
         gpu_brand = cleaned_data.get('gpu_brand')
@@ -194,6 +206,12 @@ class UserPsuListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right PSU data, checks price and quantity, checks that
+        only a PSU is chosen or a new PSU is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         psu = cleaned_data.get('psu')
         psu_name = cleaned_data.get('psu_name')
@@ -255,6 +273,12 @@ class UserRamListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right RAM data, checks price and quantity, checks that
+        only a RAM module is chosen or a new RAM module is entered,
+        returns  cleaned data
+        """
         cleaned_data = super().clean()
         ram = cleaned_data.get('ram')
         ram_name = cleaned_data.get('ram_name')
@@ -318,6 +342,12 @@ class UserStorageListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right storage data, checks price and quantity, checks that
+        only a storage is chosen or a new storage is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         storage = cleaned_data.get('storage')
         storage_name = cleaned_data.get('storage_name')
@@ -379,6 +409,12 @@ class UserCasePCListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right PC case data, checks price and quantity, checks that
+        only a PC case is chosen or a new PC case is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         casepc = cleaned_data.get('casepc')
         case_name = cleaned_data.get('case_name')
@@ -443,6 +479,12 @@ class UserMotherboardListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right motherboard data, checks price and quantity, checks that
+        only a motherboard is chosen or a new motherboard is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         motherboard = cleaned_data.get('motherboard')
         motherboard_name = cleaned_data.get('motherboard_name')
@@ -511,6 +553,12 @@ class UserCpuCoolerListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right CPU cooler data, checks price and quantity, checks that
+        only a CPU cooler is chosen or a new CPU cooler is entered, returns
+        cleaned data.
+        """
         cleaned_data = super().clean()
         cpucooler = cleaned_data.get('cpucooler')
         cooler_name = cleaned_data.get('cooler_name')
@@ -581,5 +629,9 @@ class UserPcbuildListingCreateForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        clean() method makes sure that the user gives the
+        right information, it is mostly done in create view.
+        """
         cleaned_data = super().clean()
         return cleaned_data

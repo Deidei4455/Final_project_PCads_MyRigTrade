@@ -4,6 +4,10 @@ from ..models import *
 
 
 class CpuListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for CPU listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('cpu_name', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('cpu__brand',)
@@ -11,6 +15,10 @@ class CpuListingAdmin(admin.ModelAdmin):
 
 
 class GpuListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for CPU listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('gpu_name', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('gpu__brand',)
@@ -18,6 +26,10 @@ class GpuListingAdmin(admin.ModelAdmin):
 
 
 class PsuListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for PSU listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('psu_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('psu__efficiency',)
@@ -25,6 +37,10 @@ class PsuListingAdmin(admin.ModelAdmin):
 
 
 class RamListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for RAM listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('ram_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('ram__ram_type',)
@@ -32,6 +48,10 @@ class RamListingAdmin(admin.ModelAdmin):
 
 
 class StorageListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for storage listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('storage_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('storage__storage_type',)
@@ -39,6 +59,10 @@ class StorageListingAdmin(admin.ModelAdmin):
 
 
 class CasePCListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for PC case listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('casepc_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('casepc__case_size',)
@@ -46,6 +70,10 @@ class CasePCListingAdmin(admin.ModelAdmin):
 
 
 class MotherboardListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for motherboard listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('motherboard_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('motherboard__ram_type', 'motherboard__board_size')
@@ -53,6 +81,10 @@ class MotherboardListingAdmin(admin.ModelAdmin):
 
 
 class CpuCoolerListingAdmin(admin.ModelAdmin):
+    """
+    Admin class for CPU cooler listings in admin page
+    to be displayed or edited.
+    """
     list_display = ('cooler_title', 'date_created', 'quantity', 'price', 'display_seller', 'listing_seller')
     list_editable = ('quantity', 'listing_seller')
     list_filter = ('cpucooler__cooler_type',)

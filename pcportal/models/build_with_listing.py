@@ -267,6 +267,11 @@ class PcBuildListing(models.Model):
 
     @property
     def exp_status(self):
+        """
+        This property function checks if
+        expiration date is past date or not,
+        then returns Expired or Active
+        """
         if self.expiration_date < date.today():
             return "Expired"
         return "Active"

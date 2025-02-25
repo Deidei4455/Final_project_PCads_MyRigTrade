@@ -16,6 +16,10 @@ class Seller(models.Model):
 
     @property
     def count_all_listings(self):
+        """
+        This property counts how many listings
+        does a seller have.
+        """
         # noinspection PyUnresolvedReferences
         return (self.pcbuildlisting.count() + self.cpu_listing.count() + self.gpu_listing.count() +
                 self.psu_listing.count() + self.ram_listing.count() + self.storage_listing.count() +
@@ -32,6 +36,10 @@ class Seller(models.Model):
 
 
 class SellerReview(models.Model):
+    """
+    This model stores user reviews
+    about sellers.
+    """
     date_created = models.DateTimeField(auto_now_add=True)
     content = models.TextField('Review content', max_length=2000)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True)
